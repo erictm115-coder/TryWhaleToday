@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whale — Market Validation Case Study</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@300;400;600&family=Source+Code+Pro:wght@400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --black: #111;
+            --dark: #333;
+            --mid: #666;
+            --border: #e0e0e0;
+            --bg: #fafaf8;
+            --white: #fff;
+            --accent: #1a6b3c;
+            --accent-light: #edf5f0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--dark);
+            font-family: 'Source Sans 3', sans-serif;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .page {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 4rem 2rem 6rem;
+        }
+
+        /* TOP BAR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--black);
+            margin-bottom: 3rem;
+        }
+
+        .project-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--black);
+        }
+
+        .tag {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: var(--accent-light);
+            padding: 4px 10px;
+            border-radius: 3px;
+        }
+
+        /* TITLE BLOCK */
+        .title-block {
+            margin-bottom: 3rem;
+        }
+
+        .eyebrow {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--mid);
+            margin-bottom: 0.75rem;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--black);
+            line-height: 1.15;
+            margin-bottom: 1.2rem;
+        }
+
+        .summary {
+            font-size: 1.05rem;
+            color: var(--mid);
+            max-width: 620px;
+            font-weight: 300;
+            line-height: 1.75;
+        }
+
+        /* DIVIDER */
+        hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 2.5rem 0;
+        }
+
+        /* SECTION HEADERS */
+        h2 {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--mid);
+            margin-bottom: 1.2rem;
+        }
+
+        /* METRICS ROW */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 0.75rem;
+        }
+
+        @media (max-width: 560px) {
+            .metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .metric {
+            padding: 1.4rem 1.2rem;
+            border-right: 1px solid var(--border);
+            background: var(--white);
+        }
+
+        .metric:last-child {
+            border-right: none;
+        }
+
+        .metric-val {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--black);
+            line-height: 1;
+            margin-bottom: 0.3rem;
+        }
+
+        .metric.green .metric-val {
+            color: var(--accent);
+        }
+
+        .metric-lbl {
+            font-size: 0.75rem;
+            color: var(--mid);
+            font-weight: 300;
+        }
+
+        .metrics-note {
+            font-size: 0.78rem;
+            color: var(--mid);
+            font-style: italic;
+        }
+
+        /* TWO COL */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 560px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* TEXT BLOCK */
+        .text-block p {
+            font-size: 0.92rem;
+            color: var(--dark);
+            line-height: 1.75;
+            font-weight: 300;
+        }
+
+        .text-block p+p {
+            margin-top: 0.75rem;
+        }
+
+        strong {
+            font-weight: 600;
+            color: var(--black);
+        }
+
+        /* FINDINGS LIST */
+        .findings {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .findings li {
+            font-size: 0.88rem;
+            color: var(--dark);
+            font-weight: 300;
+            padding-left: 1.2rem;
+            position: relative;
+            line-height: 1.55;
+        }
+
+        .findings li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 0.8rem;
+        }
+
+        /* AD CREATIVES */
+        .creatives-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        @media (max-width: 560px) {
+            .creatives-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .creative {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .creative-img-wrap {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: #f0f0ed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.15s;
+        }
+
+        .creative-img-wrap:hover {
+            background: #e8e8e4;
+        }
+
+        .creative-img-wrap input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .upload-hint {
+            font-size: 0.7rem;
+            color: var(--mid);
+            font-family: 'Source Code Pro', monospace;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .upload-icon {
+            font-size: 1.4rem;
+        }
+
+        .creative-img-wrap img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .creative-label {
+            padding: 0.7rem 0.9rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .creative-title {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 0.15rem;
+        }
+
+        .creative-stat-line {
+            font-size: 0.72rem;
+            color: var(--mid);
+            font-family: 'Source Code Pro', monospace;
+        }
+
+        .winner-badge {
+            display: inline-block;
+            font-size: 0.6rem;
+            font-family: 'Source Code Pro', monospace;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: var(--accent-light);
+            padding: 1px 6px;
+            border-radius: 2px;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        /* OUTCOME */
+        .outcome-box {
+            background: var(--accent-light);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 6px 6px 0;
+            padding: 1.4rem 1.6rem;
+        }
+
+        .outcome-box p {
+            font-size: 0.92rem;
+            color: var(--black);
+            font-weight: 300;
+            line-height: 1.75;
+        }
+
+        .outcome-box p+p {
+            margin-top: 0.6rem;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: 4rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .footer span {
+            font-size: 0.75rem;
+            color: #aaa;
+            font-family: 'Source Code Pro', monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+
+        <!-- TOP BAR -->
+        <div class="topbar">
+            <div class="project-name">🐋 Whale</div>
+            <div class="tag">Product Validation · 2024</div>
+        </div>
+
+        <!-- TITLE -->
+        <div class="title-block">
+            <div class="eyebrow">Case Study — Facebook Ad Experiment</div>
+            <h1>Validating Demand for a Plain-English Financial News Tool</h1>
+            <p class="summary">
+                Before building, I ran a lean Facebook ad campaign to test whether everyday people would engage with a
+                tool that translates complex financial news into simple, jargon-free language.
+            </p>
+        </div>
+
+        <hr>
+
+        <!-- METRICS -->
+        <h2>Campaign Results</h2>
+        <div class="metrics">
+            <div class="metric">
+                <div class="metric-val">€00</div>
+                <div class="metric-lbl">Total spend</div>
+            </div>
+            <div class="metric">
+                <div class="metric-val">0,000</div>
+                <div class="metric-lbl">People reached</div>
+            </div>
+            <div class="metric">
+                <div class="metric-val">0.00%</div>
+                <div class="metric-lbl">Click-through rate</div>
+            </div>
+            <div class="metric green">
+                <div class="metric-val">€0.00</div>
+                <div class="metric-lbl">Cost per click</div>
+            </div>
+        </div>
+        <p class="metrics-note">Replace placeholder values above with your actual numbers.</p>
+
+        <hr>
+
+        <!-- CONTEXT + FINDINGS -->
+        <div class="two-col">
+            <div>
+                <h2>The Hypothesis</h2>
+                <div class="text-block">
+                    <p>Most financial news is written for experts — leaving everyday people feeling confused or
+                        excluded. I hypothesised that <strong>a simple translation layer</strong> would resonate with a
+                        large, underserved audience.</p>
+                    <p>Target: ages 25–44, financially curious but not expert. No prior investing knowledge assumed.</p>
+                </div>
+            </div>
+            <div>
+                <h2>Key Findings</h2>
+                <ul class="findings">
+                    <li>CTR of X% vs. ~0.9% industry benchmark</li>
+                    <li>Lowest CPC achieved with creative focused on [describe]</li>
+                    <li>X% of clicks converted to waitlist sign-ups</li>
+                    <li>[Add your own insight here]</li>
+                    <li>[Add your own insight here]</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- AD CREATIVES -->
+        <h2>Ad Creatives Tested</h2>
+        <div class="creatives-grid">
+
+            <div class="creative">
+                <div class="creative-img-wrap" id="wrap1">
+                    <input type="file" accept="image/*" onchange="uploadImg(event,'wrap1')">
+                    <div class="upload-icon">📷</div>
+                    <div class="upload-hint">Click to upload</div>
+                </div>
+                <div class="creative-label">
+                    <div class="creative-title">Creative A <span class="winner-badge">Best CTR</span></div>
+                    <div class="creative-stat-line">CTR 0.00% · CPC €0.00</div>
+                </div>
+            </div>
+
+            <div class="creative">
+                <div class="creative-img-wrap" id="wrap2">
+                    <input type="file" accept="image/*" onchange="uploadImg(event,'wrap2')">
+                    <div class="upload-icon">📷</div>
+                    <div class="upload-hint">Click to upload</div>
+                </div>
+                <div class="creative-label">
+                    <div class="creative-title">Creative B</div>
+                    <div class="creative-stat-line">CTR 0.00% · CPC €0.00</div>
+                </div>
+            </div>
+
+            <div class="creative">
+                <div class="creative-img-wrap" id="wrap3">
+                    <input type="file" accept="image/*" onchange="uploadImg(event,'wrap3')">
+                    <div class="upload-icon">📷</div>
+                    <div class="upload-hint">Click to upload</div>
+                </div>
+                <div class="creative-label">
+                    <div class="creative-title">Creative C</div>
+                    <div class="creative-stat-line">CTR 0.00% · CPC €0.00</div>
+                </div>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <!-- OUTCOME -->
+        <h2>Outcome & Next Steps</h2>
+        <div class="outcome-box">
+            <p><strong>What the data showed:</strong> Replace this with your honest interpretation — did the results
+                validate or challenge the hypothesis? What surprised you?</p>
+            <p><strong>Decision made:</strong> Based on these results, describe what you decided to do next — build an
+                MVP, refine messaging, pivot, or park the idea. Interviewers value the reasoning here as much as the
+                numbers.</p>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <span>Whale · Facebook Validation Experiment</span>
+            <span>Eric Tm · 2024</span>
+        </div>
+
+    </div>
+
+    <script>
+        function uploadImg(e, wrapId) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+                const wrap = document.getElementById(wrapId);
+                // Clear placeholder content
+                wrap.querySelectorAll('.upload-icon, .upload-hint').forEach(el => el.remove());
+                // Add image
+                const img = document.createElement('img');
+                img.src = ev.target.result;
+                wrap.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
+</body>
+
+</html>
